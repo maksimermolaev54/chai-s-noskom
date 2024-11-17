@@ -12,39 +12,45 @@
             height: 100vh;
             margin: 0;
             font-family: Arial, sans-serif;
-            background-color: #f0f8ff;
-            color: #333;
+            background-color: #000;
+            color: #fff;
             text-align: center;
         }
         h1 {
             font-size: 2rem;
         }
-        p {
-            font-size: 1.2rem;
-            color: #555;
-        }
         .timer {
             margin-top: 1rem;
             font-size: 1.5rem;
-            color: #0078d7;
+            color: #ff5733;
         }
     </style>
 </head>
 <body>
     <div id="content">
         <h1>Привет!</h1>
-        <p>На этом сайте скоро что-то будет,<br> вернись 18 ноября в 18:00 по МСК.</p>
+        <p>На этом сайте скоро что-то будет.<br> Ожидается что-то невероятное!</p>
         <div class="timer" id="timer"></div>
     </div>
 
     <script>
-        // Время события: 18 ноября 2024 года в 20:00 по МСК
-        const eventTime = new Date("2024-11-18T20:00:00+03:00").getTime();
+        // Целевая дата: 31 декабря 9999 года
+        const eventTime = new Date("9999-12-31T23:59:59Z").getTime();
+        
+        // Зашифрованный текст
+        const encryptedMessage = "WmVtbGlhIHV6aGUgcHJvcGFsYSw" +
+                                  "gYSBtdcOpIGxpdmXigJZtIG5hIG1hcnNlLg==";
 
-        // Таймер обновляется каждую секунду
+        // Функция для расшифровки текста
+        function decryptMessage(encrypted) {
+            return atob(encrypted); // Расшифровывает base64
+        }
+
+        // Элемент таймера
         const timerElement = document.getElementById("timer");
         const contentElement = document.getElementById("content");
 
+        // Обновление таймера
         function updateTimer() {
             const currentTime = new Date().getTime();
             const timeRemaining = eventTime - currentTime;
@@ -57,15 +63,16 @@
 
                 timerElement.textContent = `Осталось: ${days}д ${hours}ч ${minutes}м ${seconds}с`;
             } else {
-                // Меняем текст, когда время истекает
+                // Показываем скрытый текст, когда время истекает
+                const decryptedMessage = decryptMessage(encryptedMessage);
                 contentElement.innerHTML = `
-                    <h1>Супер проверка уже сегодня!</h1>
+                    <h1>${decryptedMessage}</h1>
                 `;
                 clearInterval(timerInterval);
             }
         }
 
-        // Обновление каждую секунду
+        // Запускаем таймер
         const timerInterval = setInterval(updateTimer, 1000);
         updateTimer();
     </script>
