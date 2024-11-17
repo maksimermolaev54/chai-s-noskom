@@ -60,12 +60,43 @@
         const contentElement = document.getElementById("content");
         let timerSpeed = 1;
 
-        // Зашифрованный текст
-        const encryptedMessage = "WmVtbGlhIHV6aGUgcHJvcGFsYSwgYSBtdcOpIGxpdmXigJZtIG5hIG1hcnNlLg==";
+        // Зашифрованный текст с несколькими уровнями
+        const encryptedMessage = "0101011101101101011100000010000100110101001101000010011101000110"; // Финальный шифр: двоичный
 
-        // Расшифровка текста
-        function decryptMessage(encrypted) {
-            return atob(encrypted); // Расшифровывает base64
+        // Расшифровка через Base64
+        function decodeBase64(base64Str) {
+            return atob(base64Str);
+        }
+
+        // Расшифровка шифра Цезаря (сдвиг на -3)
+        function decodeCaesarCipher(str) {
+            return str
+                .split("")
+                .map(char => {
+                    const code = char.charCodeAt(0);
+                    if (code >= 1040 && code <= 1103) { // Кириллица
+                        return String.fromCharCode((code - 1040 - 3 + 32) % 32 + 1040);
+                    } else {
+                        return char; // Пропуск символов, не являющихся буквами
+                    }
+                })
+                .join("");
+        }
+
+        // Расшифровка из двоичного в текст
+        function decodeBinary(binaryStr) {
+            return binaryStr
+                .match(/.{8}/g)
+                .map(byte => String.fromCharCode(parseInt(byte, 2)))
+                .join("");
+        }
+
+        // Полная расшифровка
+        function decryptMessage() {
+            const binaryDecoded = decodeBinary(encryptedMessage);
+            const caesarDecoded = decodeCaesarCipher(binaryDecoded);
+            const finalMessage = decodeBase64(caesarDecoded);
+            return finalMessage;
         }
 
         // Обновление таймера
@@ -81,7 +112,7 @@
 
                 timerElement.textContent = `Осталось: ${days}д ${hours}ч ${minutes}м ${seconds}с`;
             } else {
-                const decryptedMessage = decryptMessage(encryptedMessage);
+                const decryptedMessage = decryptMessage();
                 contentElement.innerHTML = `
                     <h1>${decryptedMessage}</h1>
                 `;
