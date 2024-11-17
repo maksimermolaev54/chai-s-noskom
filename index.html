@@ -7,6 +7,7 @@
     <style>
         body {
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
@@ -15,14 +16,27 @@
             background-color: #000;
             color: #fff;
             text-align: center;
+            overflow: hidden;
         }
         h1 {
             font-size: 2rem;
         }
         .timer {
-            margin-top: 1rem;
+            margin: 1rem 0;
             font-size: 1.5rem;
             color: #ff5733;
+        }
+        .speed-control {
+            margin-top: 2rem;
+            text-align: center;
+        }
+        .slider {
+            width: 300px;
+            margin-top: 1rem;
+        }
+        .speed-label {
+            margin-top: 0.5rem;
+            font-size: 1.2rem;
         }
     </style>
 </head>
@@ -32,28 +46,32 @@
         <p>На этом сайте скоро что-то будет.<br> Ожидается что-то невероятное!</p>
         <div class="timer" id="timer"></div>
     </div>
+    <div class="speed-control">
+        <label for="speedSlider">Ускорить время:</label>
+        <input type="range" id="speedSlider" class="slider" min="1" max="10" step="0.5" value="1">
+        <div id="speedLabel" class="speed-label">1x</div>
+    </div>
 
     <script>
-        // Целевая дата: 31 декабря 9999 года
         const eventTime = new Date("9999-12-31T23:59:59Z").getTime();
-        
-        // Зашифрованный текст
-        const encryptedMessage = "WmVtbGlhIHV6aGUgcHJvcGFsYSw" +
-                                  "gYSBtdcOpIGxpdmXigJZtIG5hIG1hcnNlLg==";
+        const timerElement = document.getElementById("timer");
+        const speedSlider = document.getElementById("speedSlider");
+        const speedLabel = document.getElementById("speedLabel");
+        const contentElement = document.getElementById("content");
+        let timerSpeed = 1;
 
-        // Функция для расшифровки текста
+        // Зашифрованный текст
+        const encryptedMessage = "WmVtbGlhIHV6aGUgcHJvcGFsYSwgYSBtdcOpIGxpdmXigJZtIG5hIG1hcnNlLg==";
+
+        // Расшифровка текста
         function decryptMessage(encrypted) {
             return atob(encrypted); // Расшифровывает base64
         }
 
-        // Элемент таймера
-        const timerElement = document.getElementById("timer");
-        const contentElement = document.getElementById("content");
-
         // Обновление таймера
         function updateTimer() {
             const currentTime = new Date().getTime();
-            const timeRemaining = eventTime - currentTime;
+            const timeRemaining = Math.max(0, (eventTime - currentTime) / timerSpeed);
 
             if (timeRemaining > 0) {
                 const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
@@ -63,16 +81,77 @@
 
                 timerElement.textContent = `Осталось: ${days}д ${hours}ч ${minutes}м ${seconds}с`;
             } else {
-                // Показываем скрытый текст, когда время истекает
                 const decryptedMessage = decryptMessage(encryptedMessage);
                 contentElement.innerHTML = `
                     <h1>${decryptedMessage}</h1>
                 `;
                 clearInterval(timerInterval);
+                stopCrazyMode(); // Выключаем режим "Сумасшедший", если он включен
             }
         }
 
-        // Запускаем таймер
+        // Обработчик изменения скорости
+        speedSlider.addEventListener("input", () => {
+            timerSpeed = parseFloat(speedSlider.value);
+            speedLabel.textContent = `${timerSpeed}x`;
+
+            if (timerSpeed === 10) {
+                startCrazyMode();
+            } else {
+                stopCrazyMode();
+            }
+        });
+
+        // Режим "Сумасшедший"
+        let crazyModeInterval;
+        function startCrazyMode() {
+            let colors = ["red", "orange", "yellow", "green", "blue", "indigo", "violet"];
+            let index = 0;
+
+            // Мигание фона
+            crazyModeInterval = setInterval(() => {
+                document.body.style.backgroundColor = colors[index];
+                index = (index + 1) % colors.length;
+            }, 100);
+
+            // Автодвижение курсора
+            document.body.style.cursor = "none";
+            let cursorX = window.innerWidth / 2;
+            let cursorY = window.innerHeight / 2;
+            const cursorSpeed = 5;
+
+            const moveCursor = () => {
+                cursorX += Math.random() > 0.5 ? cursorSpeed : -cursorSpeed;
+                cursorY += Math.random() > 0.5 ? cursorSpeed : -cursorSpeed;
+                cursorX = Math.max(0, Math.min(window.innerWidth, cursorX));
+                cursorY = Math.max(0, Math.min(window.innerHeight, cursorY));
+
+                const fakeCursor = document.createElement("div");
+                fakeCursor.style.position = "fixed";
+                fakeCursor.style.width = "5px";
+                fakeCursor.style.height = "5px";
+                fakeCursor.style.backgroundColor = "white";
+                fakeCursor.style.borderRadius = "50%";
+                fakeCursor.style.left = `${cursorX}px`;
+                fakeCursor.style.top = `${cursorY}px`;
+                fakeCursor.style.zIndex = "9999";
+                document.body.appendChild(fakeCursor);
+
+                setTimeout(() => {
+                    fakeCursor.remove();
+                }, 50);
+            };
+
+            crazyModeInterval = setInterval(moveCursor, 100);
+        }
+
+        function stopCrazyMode() {
+            clearInterval(crazyModeInterval);
+            document.body.style.backgroundColor = "#000";
+            document.body.style.cursor = "default";
+        }
+
+        // Запуск таймера
         const timerInterval = setInterval(updateTimer, 1000);
         updateTimer();
     </script>
