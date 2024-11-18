@@ -3,188 +3,152 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Скоро что-то будет!</title>
+    <title>100 Весёлых Кнопок</title>
     <style>
         body {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
             font-family: Arial, sans-serif;
-            background-color: #000;
-            color: #fff;
             text-align: center;
-            overflow: hidden;
+            background-color: #1e1e2f;
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
         }
-        h1 {
-            font-size: 2rem;
+        .buttons-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
         }
-        .timer {
-            margin: 1rem 0;
-            font-size: 1.5rem;
-            color: #ff5733;
+        .button {
+            background-color: #ff007f;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 15px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
         }
-        .speed-control {
-            margin-top: 2rem;
-            text-align: center;
-        }
-        .slider {
-            width: 300px;
-            margin-top: 1rem;
-        }
-        .speed-label {
-            margin-top: 0.5rem;
-            font-size: 1.2rem;
+        .button:hover {
+            background-color: #ffa07a;
+            transform: scale(1.1);
         }
     </style>
 </head>
 <body>
-    <div id="content">
-        <h1>Привет!</h1>
-        <p>На этом сайте скоро что-то будет.<br> Ожидается что-то невероятное!</p>
-        <div class="timer" id="timer"></div>
-    </div>
-    <div class="speed-control">
-        <label for="speedSlider">Ускорить время:</label>
-        <input type="range" id="speedSlider" class="slider" min="1" max="10" step="0.5" value="1">
-        <div id="speedLabel" class="speed-label">1x</div>
+    <h1>100 Весёлых Кнопок</h1>
+    <p>Каждая кнопка делает что-то своё! Попробуй их все!</p>
+    <div class="buttons-container">
+        <!-- Кнопки генерируются через JS -->
     </div>
 
     <script>
-        const eventTime = new Date("9999-12-31T23:59:59Z").getTime();
-        const timerElement = document.getElementById("timer");
-        const speedSlider = document.getElementById("speedSlider");
-        const speedLabel = document.getElementById("speedLabel");
-        const contentElement = document.getElementById("content");
-        let timerSpeed = 1;
+        const buttonsContainer = document.querySelector('.buttons-container');
 
-        // Зашифрованный текст с несколькими уровнями
-        const encryptedMessage = "0101011101101101011100000010000100110101001101000010011101000110"; // Финальный шифр: двоичный
-
-        // Расшифровка через Base64
-        function decodeBase64(base64Str) {
-            return atob(base64Str);
+        // Создаём 100 кнопок с уникальными функциями
+        for (let i = 1; i <= 100; i++) {
+            const button = document.createElement('button');
+            button.className = "button";
+            button.textContent = `Кнопка ${i}`;
+            button.onclick = () => uniqueFunction(i);
+            buttonsContainer.appendChild(button);
         }
 
-        // Расшифровка шифра Цезаря (сдвиг на -3)
-        function decodeCaesarCipher(str) {
-            return str
-                .split("")
-                .map(char => {
-                    const code = char.charCodeAt(0);
-                    if (code >= 1040 && code <= 1103) { // Кириллица
-                        return String.fromCharCode((code - 1040 - 3 + 32) % 32 + 1040);
-                    } else {
-                        return char; // Пропуск символов, не являющихся буквами
-                    }
-                })
-                .join("");
-        }
-
-        // Расшифровка из двоичного в текст
-        function decodeBinary(binaryStr) {
-            return binaryStr
-                .match(/.{8}/g)
-                .map(byte => String.fromCharCode(parseInt(byte, 2)))
-                .join("");
-        }
-
-        // Полная расшифровка
-        function decryptMessage() {
-            const binaryDecoded = decodeBinary(encryptedMessage);
-            const caesarDecoded = decodeCaesarCipher(binaryDecoded);
-            const finalMessage = decodeBase64(caesarDecoded);
-            return finalMessage;
-        }
-
-        // Обновление таймера
-        function updateTimer() {
-            const currentTime = new Date().getTime();
-            const timeRemaining = Math.max(0, (eventTime - currentTime) / timerSpeed);
-
-            if (timeRemaining > 0) {
-                const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
-
-                timerElement.textContent = `Осталось: ${days}д ${hours}ч ${minutes}м ${seconds}с`;
-            } else {
-                const decryptedMessage = decryptMessage();
-                contentElement.innerHTML = `
-                    <h1>${decryptedMessage}</h1>
-                `;
-                clearInterval(timerInterval);
-                stopCrazyMode(); // Выключаем режим "Сумасшедший", если он включен
+        // Каждая кнопка вызывает уникальную функцию
+        function uniqueFunction(index) {
+            switch (index) {
+                case 1: alert("Ты нажал первую кнопку! 🎉"); break;
+                case 2: document.body.style.backgroundColor = randomColor(); break;
+                case 3: alert("Мир захвачен котиками! 🐱"); break;
+                case 4: addText("Ты добавил текст! 📜"); break;
+                case 5: document.body.style.fontSize = `${Math.random() * 10 + 10}px`; break;
+                case 6: makeTextJump(); break;
+                case 7: spinPage(); break;
+                case 8: changeTextColor(); break;
+                case 9: playSound("https://www.soundjay.com/button/beep-01a.wav"); break;
+                case 10: makeConfetti(); break;
+                case 11: shakeScreen(); break;
+                case 12: alert("Ты супергерой! 🦸"); break;
+                case 13: randomEmoji(); break;
+                case 14: showRandomImage(); break;
+                case 15: document.body.style.border = `10px dashed ${randomColor()}`; break;
+                case 16: createFloatingEmoji("🔥"); break;
+                case 17: changeBackgroundPattern(); break;
+                case 18: makeRainbowBorders(); break;
+                case 19: alert("Кнопка-сюрприз! 🎁"); break;
+                case 20: spinElements(); break;
+                case 21: document.body.style.transform = `scale(${Math.random() * 2 + 0.5})`; break;
+                case 22: alert("Ты герой этого сайта! 💂"); break;
+                case 23: addRain("💧"); break;
+                case 24: alert("Гравитация отключена! 🚀"); break;
+                case 25: rotateElements(); break;
+                case 26: document.body.style.opacity = Math.random(); break;
+                case 27: spinPage(); break;
+                case 28: createFloatingEmoji("🌟"); break;
+                case 29: changeTextColor(); break;
+                case 30: addText("Ты нашёл спрятанный текст! 🕵️‍♂️"); break;
+                case 31: alert("Ты нашёл портал в другое измерение! 🌌"); break;
+                case 32: playSound("https://www.soundjay.com/button/beep-02.wav"); break;
+                case 33: document.body.style.transform = "scale(2)"; break;
+                case 34: spinPage(); break;
+                case 35: addRain("🍬"); break;
+                case 36: alert("Тайное стало явным! 🔮"); break;
+                case 37: createFloatingEmoji("✨"); break;
+                case 38: shakeScreen(); break;
+                case 39: changeBackgroundPattern(); break;
+                case 40: addText("Всё возможно, если есть кнопки!"); break;
+                case 41: alert("Ты активировал волшебство! ✨"); break;
+                case 42: createFloatingEmoji("🤖"); break;
+                case 43: shakeScreen(); break;
+                case 44: alert("Сила кнопок бесконечна! 🔥"); break;
+                case 45: changeBackgroundPattern(); break;
+                case 46: document.body.style.border = "5px solid gold"; break;
+                case 47: playSound("https://www.soundjay.com/button/beep-03.wav"); break;
+                case 48: alert("Твоя кнопка изменяет судьбу! 🧭"); break;
+                case 49: spinPage(); break;
+                case 50: makeTextJump(); break;
+                case 51: addText("Текст прямо как в сказке!"); break;
+                case 52: randomEmoji(); break;
+                case 53: addRain("💥"); break;
+                case 54: playSound("https://www.soundjay.com/misc/bell-ringing-01.mp3"); break;
+                case 55: alert("Кнопки творят чудеса! 🌈"); break;
+                case 56: changeBackgroundPattern(); break;
+                case 57: spinPage(); break;
+                case 58: shakeScreen(); break;
+                case 59: addText("Ты творец кнопочного искусства!"); break;
+                case 60: makeConfetti(); break;
+                case 61: createFloatingEmoji("🎁"); break;
+                case 62: document.body.style.fontSize = `${Math.random() * 5 + 15}px`; break;
+                case 63: playSound("https://www.soundjay.com/button/button-09.wav"); break;
+                case 64: alert("Добро пожаловать в сказочный мир! 🦄"); break;
+                case 65: spinPage(); break;
+                case 66: createFloatingEmoji("🌍"); break;
+                case 67: makeRainbowBorders(); break;
+                case 68: alert("Ты легенда этого сайта! 🥇"); break;
+                case 69: spinElements(); break;
+                case 70: addRain("🎈"); break;
+                case 71: randomEmoji(); break;
+                case 72: shakeScreen(); break;
+                case 73: playSound("https://www.soundjay.com/button/beep-06.wav"); break;
+                case 74: makeConfetti(); break;
+                case 75: alert("Ты активировал магическую кнопку! 🪄"); break;
+                case 76: createFloatingEmoji("🌠"); break;
+                case 77: addText("Кнопки — сила, а ты — мастер кнопок!"); break;
+                case 78: spinPage(); break;
+                case 79: playSound("https://www.soundjay.com/misc/doorbell-01.mp3"); break;
+                case 80: alert("Праздник начался! 🎉"); break;
+                // ...
+                case 100: alert("Ты дошёл до последней кнопки! 🏁"); break;
+                default: alert("Проверяй все кнопки!"); break;
             }
         }
 
-        // Обработчик изменения скорости
-        speedSlider.addEventListener("input", () => {
-            timerSpeed = parseFloat(speedSlider.value);
-            speedLabel.textContent = `${timerSpeed}x`;
-
-            if (timerSpeed === 10) {
-                startCrazyMode();
-            } else {
-                stopCrazyMode();
-            }
-        });
-
-        // Режим "Сумасшедший"
-        let crazyModeInterval;
-        function startCrazyMode() {
-            let colors = ["red", "orange", "yellow", "green", "blue", "indigo", "violet"];
-            let index = 0;
-
-            // Мигание фона
-            crazyModeInterval = setInterval(() => {
-                document.body.style.backgroundColor = colors[index];
-                index = (index + 1) % colors.length;
-            }, 100);
-
-            // Автодвижение курсора
-            document.body.style.cursor = "none";
-            let cursorX = window.innerWidth / 2;
-            let cursorY = window.innerHeight / 2;
-            const cursorSpeed = 5;
-
-            const moveCursor = () => {
-                cursorX += Math.random() > 0.5 ? cursorSpeed : -cursorSpeed;
-                cursorY += Math.random() > 0.5 ? cursorSpeed : -cursorSpeed;
-                cursorX = Math.max(0, Math.min(window.innerWidth, cursorX));
-                cursorY = Math.max(0, Math.min(window.innerHeight, cursorY));
-
-                const fakeCursor = document.createElement("div");
-                fakeCursor.style.position = "fixed";
-                fakeCursor.style.width = "5px";
-                fakeCursor.style.height = "5px";
-                fakeCursor.style.backgroundColor = "white";
-                fakeCursor.style.borderRadius = "50%";
-                fakeCursor.style.left = `${cursorX}px`;
-                fakeCursor.style.top = `${cursorY}px`;
-                fakeCursor.style.zIndex = "9999";
-                document.body.appendChild(fakeCursor);
-
-                setTimeout(() => {
-                    fakeCursor.remove();
-                }, 50);
-            };
-
-            crazyModeInterval = setInterval(moveCursor, 100);
-        }
-
-        function stopCrazyMode() {
-            clearInterval(crazyModeInterval);
-            document.body.style.backgroundColor = "#000";
-            document.body.style.cursor = "default";
-        }
-
-        // Запуск таймера
-        const timerInterval = setInterval(updateTimer, 1000);
-        updateTimer();
+        function randomColor() { return `hsl(${Math.random() * 360}, 100%, 50%)`; }
+        function spinPage() { document.body.style.transform = `rotate(${Math.random() * 720 - 360}deg)`; }
+        function addText(msg) { const p = document.createElement("p"); p.textContent = msg; document.body.appendChild(p); }
+        function playSound(url) { const audio = new Audio(url); audio.play(); }
+        function makeConfetti() { alert("Представь конфетти вокруг! 🎊"); }
     </script>
 </body>
 </html>
