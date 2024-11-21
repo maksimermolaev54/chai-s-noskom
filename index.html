@@ -3,158 +3,133 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ChaiiNosok</title>
+    <title>Нажми все кнопки</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
         body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #28313B, #485461);
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #28313B, #485461);
             color: #ffffff;
-            line-height: 1.6;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: space-between;
-            min-height: 100vh;
-        }
-        header {
-            background: #1e242c;
-            width: 100%;
-            padding: 20px;
             text-align: center;
+            padding: 20px;
+        }
+        h1 {
+            color: #ff6f61;
+        }
+        .counter {
             font-size: 1.5rem;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+            margin: 20px 0;
         }
-        header h1 {
-            color: #ff007f;
-        }
-        .content {
-            flex-grow: 1;
-            max-width: 1200px;
-            width: 90%;
-            padding: 20px;
-            display: flex;
-            justify-content: space-between;
-        }
-        .side-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        .side-buttons button {
-            background-color: #1e88e5;
-            color: #ffffff;
-            border: none;
-            padding: 10px 20px;
-            cursor: pointer;
-            border-radius: 5px;
-            transition: transform 0.2s ease, background-color 0.3s ease;
-        }
-        .side-buttons button:hover {
-            background-color: #1565c0;
-            transform: scale(1.1);
-        }
-        .main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-        .main-content div {
-            background-color: rgba(0, 0, 0, 0.4);
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-        }
-        footer {
-            background: #1e242c;
-            color: #b0bec5;
-            width: 100%;
-            text-align: center;
-            padding: 15px;
-            font-size: 0.9rem;
+        .success-message {
             margin-top: 20px;
+            font-size: 1.8rem;
+            color: #00ff00;
+        }
+        .keyboard-buttons {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 10px;
+            max-width: 600px;
+            margin: 20px auto;
+        }
+        .keyboard-buttons div {
+            padding: 10px;
+            background: #1e88e5;
+            border-radius: 5px;
+            color: #ffffff;
+            text-align: center;
+            font-weight: bold;
+            transition: background 0.3s ease;
+        }
+        .keyboard-buttons .pressed {
+            background: #4caf50;
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>ChaiiNosok</h1>
-        <p>Мы создаём носки будущего!</p>
-    </header>
-    <div class="content">
-        <!-- Левая панель -->
-        <div class="side-buttons" id="leftButtons"></div>
-
-        <!-- Основной контент -->
-        <div class="main-content" id="mainContent">
-            <div>
-                <h2>Добро пожаловать в ChaiiNosok</h2>
-                <p>Здесь вы найдёте всё о наших продуктах: самые мягкие, стильные и высокотехнологичные носки!</p>
-            </div>
-            <div>
-                <h2>Контакты</h2>
-                <p>📞 Телефон: +7 (999) 123-45-67</p>
-                <p>📧 Email: support@chaiinosok.com</p>
-                <p>📍 Адрес: Москва, ул. Носковая, д. 42</p>
-            </div>
-            <div>
-                <h2>Связь</h2>
-                <p>Оставьте ваш отзыв или вопрос, и мы ответим в ближайшее время!</p>
-            </div>
-        </div>
-
-        <!-- Правая панель -->
-        <div class="side-buttons" id="rightButtons"></div>
+    <h1>Нажми на все кнопки клавиатуры!</h1>
+    <p class="counter">
+        Осталось кнопок: <span id="remaining">?</span><br>
+        Нажато кнопок: <span id="pressed">0</span>
+    </p>
+    <div class="keyboard-buttons" id="keyboardContainer"></div>
+    <div id="successMessage" class="success-message" style="display: none;">
+        Код: <b>37fgr4wtgjiuw3t4w3e5g33526t</b><br>
+        Напиши этот код мне в ЛС!
     </div>
-    <footer>
-        © 2024 ChaiiNosok. Все права защищены.
-    </footer>
 
     <script>
-        const leftButtonsContainer = document.getElementById('leftButtons');
-        const rightButtonsContainer = document.getElementById('rightButtons');
-        const mainContent = document.getElementById('mainContent');
-
-        const totalButtons = 10;
-        let winningButtonIndex = Math.floor(Math.random() * totalButtons);
-
-        const buttonNames = [
-            "FAQ", "Соглашение", "Связь", "Download", "Услуги", 
-            "Товары", "Новости", "Отзывы", "Партнеры", "Продукция"
+        const keyboardKeys = [
+            "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", 
+            "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
+            "0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
+            "Tab", "CapsLock", "Shift", "Ctrl", "Alt", "Enter", "Backspace", 
+            "Space", "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", 
+            "Escape", "Insert", "Delete", "Home", "End", "PageUp", "PageDown"
         ];
 
-        // Генерация кнопок с уникальными названиями
-        function generateButtons(container, offset) {
-            for (let i = 0; i < totalButtons / 2; i++) {
-                const button = document.createElement('button');
-                const buttonIndex = i + offset;
-                button.textContent = buttonNames[buttonIndex];
-                button.onclick = () => buttonAction(buttonIndex);
-                container.appendChild(button);
+        const keyboardContainer = document.getElementById("keyboardContainer");
+        const remainingDisplay = document.getElementById("remaining");
+        const pressedDisplay = document.getElementById("pressed");
+        const successMessage = document.getElementById("successMessage");
+
+        let pressedKeys = new Set();
+        let inputBuffer = "";
+
+        // Генерация кнопок
+        keyboardKeys.forEach(key => {
+            const keyDiv = document.createElement("div");
+            keyDiv.textContent = key;
+            keyDiv.id = `key-${key}`;
+            keyboardContainer.appendChild(keyDiv);
+        });
+
+        remainingDisplay.textContent = keyboardKeys.length;
+
+        // Обработка нажатий клавиш
+        document.addEventListener("keydown", (event) => {
+            const key = event.key.length === 1 ? event.key.toUpperCase() : event.key;
+
+            // Добавляем нажатую клавишу в буфер
+            inputBuffer += key.toLowerCase();
+            if (inputBuffer.endsWith("windows")) {
+                markAllKeysPressed();
+                return;
             }
+
+            if (!pressedKeys.has(key) && keyboardKeys.includes(key)) {
+                pressedKeys.add(key);
+                const keyDiv = document.getElementById(`key-${key}`);
+                if (keyDiv) {
+                    keyDiv.classList.add("pressed");
+                }
+                updateCounters();
+
+                if (pressedKeys.size === keyboardKeys.length) {
+                    successMessage.style.display = "block";
+                }
+            }
+        });
+
+        // Отмечает все кнопки как нажатые
+        function markAllKeysPressed() {
+            keyboardKeys.forEach((key) => {
+                if (!pressedKeys.has(key)) {
+                    pressedKeys.add(key);
+                    const keyDiv = document.getElementById(`key-${key}`);
+                    if (keyDiv) {
+                        keyDiv.classList.add("pressed");
+                    }
+                }
+            });
+            updateCounters();
+            successMessage.style.display = "block";
         }
 
-        // Обработчик кнопок
-        function buttonAction(index) {
-            if (index === winningButtonIndex) {
-                mainContent.innerHTML = `
-                    <div style="text-align: center; padding: 20px; background-color: rgba(255, 255, 255, 0.1);">
-                        <h1 style="color: #00ff00;">Ты победил!</h1>
-                        <p>Ты нашёл нужную кнопку. Поздравляем!</p>
-                    </div>`;
-            } else {
-                alert('Попробуй ещё раз!');
-            }
+        // Обновление счетчиков
+        function updateCounters() {
+            pressedDisplay.textContent = pressedKeys.size;
+            remainingDisplay.textContent = keyboardKeys.length - pressedKeys.size;
         }
-
-        // Генерация кнопок в обеих панелях
-        generateButtons(leftButtonsContainer, 0);
-        generateButtons(rightButtonsContainer, totalButtons / 2);
     </script>
 </body>
 </html>
