@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>index2000</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f8ff;
+        }
+        .quote {
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .quote span {
+            border-bottom: 1px solid black;
+            display: inline-block;
+            width: 20px;
+            text-align: center;
+        }
+        .quote input {
+            width: 20px;
+            text-align: center;
+            font-size: 18px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="quote">
+        Н<span><input maxlength="1" data-correct="е"></span> п<span><input maxlength="1" data-correct="е"></span>й ч<span><input maxlength="1" data-correct="а"></span>й с тр<span><input maxlength="1" data-correct="о"></span>яном, п<span><input maxlength="1" data-correct="е"></span>й ч<span><input maxlength="1" data-correct="а"></span>й — гд<span><input maxlength="1" data-correct="е"></span> тр<span><input maxlength="1" data-correct="о"></span>ян пь<span><input maxlength="1" data-correct="ё"></span>т.
+    </div>
+    <button onclick="checkAnswers()">Проверка</button>
+    <div class="result" id="result"></div>
+
+    <script>
+        function checkAnswers() {
+            const inputs = document.querySelectorAll('.quote input');
+            let allCorrect = true;
+
+            inputs.forEach(input => {
+                const correctLetter = input.getAttribute('data-correct');
+                if (input.value.toLowerCase() !== correctLetter.toLowerCase()) {
+                    allCorrect = false;
+                }
+            });
+
+            const result = document.getElementById('result');
+            if (allCorrect) {
+                result.style.color = 'green';
+                result.textContent = 'Правильно!';
+                setTimeout(() => {
+                    window.location.href = 'index9999.html';
+                }, 2000); // Переход через 2 секунды
+            } else {
+                result.style.color = 'red';
+                result.textContent = 'Неправильно, попробуй ещё раз.';
+            }
+        }
+    </script>
+</body>
+</html>

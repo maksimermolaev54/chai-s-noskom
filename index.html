@@ -1,134 +1,133 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Нажми все кнопки</title>
+    <title>Интерактивный сайт</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background: linear-gradient(to right, #28313B, #485461);
-            color: #ffffff;
-            text-align: center;
-            padding: 20px;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f0f0f0;
         }
-        h1 {
-            color: #ff6f61;
-        }
-        .counter {
-            font-size: 1.5rem;
-            margin: 20px 0;
-        }
-        .success-message {
-            margin-top: 20px;
-            font-size: 1.8rem;
-            color: #00ff00;
-        }
-        .keyboard-buttons {
-            display: grid;
-            grid-template-columns: repeat(10, 1fr);
-            gap: 10px;
-            max-width: 600px;
-            margin: 20px auto;
-        }
-        .keyboard-buttons div {
+        .header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: black;
+            color: white;
             padding: 10px;
-            background: #1e88e5;
-            border-radius: 5px;
-            color: #ffffff;
+            cursor: pointer;
             text-align: center;
-            font-weight: bold;
-            transition: background 0.3s ease;
         }
-        .keyboard-buttons .pressed {
-            background: #4caf50;
+        .dropdown {
+            display: none;
+            position: absolute;
+            top: 40px;
+            background-color: white;
+            border: 1px solid black;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            width: 200px;
+            text-align: left;
+        }
+        .dropdown div {
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+            cursor: pointer;
+        }
+        .dropdown div:hover {
+            background-color: #eee;
+        }
+        #content {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        #modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border: 1px solid black;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+            display: none;
+            text-align: center;
+        }
+        #modal button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+        #modal button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
         }
     </style>
 </head>
 <body>
-    <h1>Нажми на все кнопки клавиатуры!</h1>
-    <p class="counter">
-        Осталось кнопок: <span id="remaining">?</span><br>
-        Нажато кнопок: <span id="pressed">0</span>
-    </p>
-    <div class="keyboard-buttons" id="keyboardContainer"></div>
-    <div id="successMessage" class="success-message" style="display: none;">
-        Код: <b>37fgr4wtgjiuw3t4w3e5g33526t</b><br>
-        Напиши этот код мне в ЛС!
+    <div class="header" onclick="toggleDropdown()">Каталог</div>
+    <div class="dropdown" id="dropdown">
+        <div>ТУТ НИЧЕГО НЕТУ!</div>
+        <div>ТУТ НИЧЕГО НЕТУ!</div>
+        <div>ТУТ НИЧЕГО НЕТУ!</div>
+        <div>ТУТ НИЧЕГО НЕТУ!</div>
+        <div>ТУТ НИЧЕГО НЕТУ!</div>
+        <div>ТУТ НИЧЕГО НЕТУ!</div>
+        <div>ТУТ НИЧЕГО НЕТУ!</div>
+        <div onclick="showWarning()">Интерактив</div>
+    </div>
+    <div id="content">Сайт ещё не готов</div>
+
+    <div id="modal">
+        <p>Данная страница сайта не доделана до конца! ОНА МОЖЕТ БЫТЬ СЫРОЙ!</p>
+        <button onclick="closeModal()">Отмена</button>
+        <button id="okButton" onclick="redirectToPage()" disabled>OK</button>
     </div>
 
     <script>
-        const keyboardKeys = [
-            "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", 
-            "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
-            "0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
-            "Tab", "CapsLock", "Shift", "Ctrl", "Alt", "Enter", "Backspace", 
-            "Space", "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", 
-            "Escape", "Insert", "Delete", "Home", "End", "PageUp", "PageDown"
-        ];
+        let timer;
+        let secondsLeft = 30;
 
-        const keyboardContainer = document.getElementById("keyboardContainer");
-        const remainingDisplay = document.getElementById("remaining");
-        const pressedDisplay = document.getElementById("pressed");
-        const successMessage = document.getElementById("successMessage");
-
-        let pressedKeys = new Set();
-        let inputBuffer = "";
-
-        // Генерация кнопок
-        keyboardKeys.forEach(key => {
-            const keyDiv = document.createElement("div");
-            keyDiv.textContent = key;
-            keyDiv.id = `key-${key}`;
-            keyboardContainer.appendChild(keyDiv);
-        });
-
-        remainingDisplay.textContent = keyboardKeys.length;
-
-        // Обработка нажатий клавиш
-        document.addEventListener("keydown", (event) => {
-            const key = event.key.length === 1 ? event.key.toUpperCase() : event.key;
-
-            // Добавляем нажатую клавишу в буфер
-            inputBuffer += key.toLowerCase();
-            if (inputBuffer.endsWith("windows")) {
-                markAllKeysPressed();
-                return;
-            }
-
-            if (!pressedKeys.has(key) && keyboardKeys.includes(key)) {
-                pressedKeys.add(key);
-                const keyDiv = document.getElementById(`key-${key}`);
-                if (keyDiv) {
-                    keyDiv.classList.add("pressed");
-                }
-                updateCounters();
-
-                if (pressedKeys.size === keyboardKeys.length) {
-                    successMessage.style.display = "block";
-                }
-            }
-        });
-
-        // Отмечает все кнопки как нажатые
-        function markAllKeysPressed() {
-            keyboardKeys.forEach((key) => {
-                if (!pressedKeys.has(key)) {
-                    pressedKeys.add(key);
-                    const keyDiv = document.getElementById(`key-${key}`);
-                    if (keyDiv) {
-                        keyDiv.classList.add("pressed");
-                    }
-                }
-            });
-            updateCounters();
-            successMessage.style.display = "block";
+        function toggleDropdown() {
+            const dropdown = document.getElementById('dropdown');
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
         }
 
-        // Обновление счетчиков
-        function updateCounters() {
-            pressedDisplay.textContent = pressedKeys.size;
-            remainingDisplay.textContent = keyboardKeys.length - pressedKeys.size;
+        function showWarning() {
+            const modal = document.getElementById('modal');
+            const okButton = document.getElementById('okButton');
+            modal.style.display = 'block';
+            okButton.disabled = true;
+            okButton.textContent = `OK (${secondsLeft})`;
+
+            timer = setInterval(() => {
+                secondsLeft--;
+                okButton.textContent = `OK (${secondsLeft})`;
+                if (secondsLeft === 0) {
+                    clearInterval(timer);
+                    okButton.disabled = false;
+                    okButton.textContent = 'OK';
+                }
+            }, 1000);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('modal');
+            modal.style.display = 'none';
+            clearInterval(timer);
+            secondsLeft = 30;
+        }
+
+        function redirectToPage() {
+            window.location.href = 'index2000.html';
         }
     </script>
 </body>
