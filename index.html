@@ -3,131 +3,360 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Интерактивный сайт</title>
+    <title>Windows 95 Styled Site</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
             margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            background-color: #f0f0f0;
+            background: url('https://i.imgur.com/11hjwyR.png') center center no-repeat;
+            background-size: cover;
+            font-family: Tahoma, sans-serif;
         }
-        .header {
+
+        #desktop {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .icon {
             position: absolute;
-            top: 0;
+            text-align: center;
+            color: black;
+            cursor: pointer;
+            width: 70px;
+            z-index: 10;
+        }
+
+        .icon img {
+            width: 50px;
+            height: 50px;
+        }
+
+        .icon span {
+            font-size: 12px;
+        }
+
+        .taskbar {
+            position: fixed;
+            bottom: 0;
             left: 0;
             width: 100%;
-            background-color: black;
-            color: white;
-            padding: 10px;
-            cursor: pointer;
-            text-align: center;
+            height: 40px;
+            background: gray;
+            display: flex;
+            align-items: center;
+            border-top: 2px solid black;
         }
-        .dropdown {
+
+        .start-button {
+            background: silver;
+            border: 2px outset gray;
+            padding: 5px 10px;
+            margin: 0 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+
+        .start-menu {
             display: none;
-            position: absolute;
-            top: 40px;
-            background-color: white;
-            border: 1px solid black;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            position: fixed;
+            bottom: 40px;
+            left: 0;
+            background: lightgray;
             width: 200px;
-            text-align: left;
-        }
-        .dropdown div {
+            border: 2px solid gray;
             padding: 10px;
-            border-bottom: 1px solid #ccc;
+        }
+
+        .start-menu button {
+            background: lightgray;
+            border: none;
             cursor: pointer;
+            padding: 5px 10px;
+            width: 100%;
         }
-        .dropdown div:hover {
-            background-color: #eee;
+
+        .start-menu button:hover {
+            background: gray;
         }
-        #content {
-            font-size: 24px;
-            font-weight: bold;
+
+        .window {
+            width: 300px;
+            height: 200px;
+            position: absolute;
+            background-color: lightgray;
+            border: 2px solid black;
+            box-shadow: 5px 5px 10px rgba(0,0,0,0.5);
+            display: none;
+            z-index: 20;
         }
-        #modal {
+
+        .window-header {
+            background-color: silver;
+            padding: 5px;
+            cursor: move;
+            user-select: none;
+        }
+
+        .window-content {
+            padding: 10px;
+            overflow-y: auto;
+            height: 160px;
+        }
+
+        #gift {
+            position: absolute;
+            left: 300px;
+            top: 200px;
+            cursor: pointer;
+            z-index: 30;
+        }
+
+        #gift img {
+            width: 50px;
+            height: 50px;
+        }
+
+        #video-window {
+            display: none;
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background-color: white;
-            padding: 20px;
-            border: 1px solid black;
-            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
-            display: none;
-            text-align: center;
+            z-index: 100;
+            background-color: rgba(0, 0, 0, 0.7);
         }
-        #modal button {
+
+        #video-window video {
+            width: 80vw;
+            height: 80vh;
+        }
+
+        /* Рисовалка */
+        #paint-canvas {
+            border: 2px solid black;
+            margin-top: 20px;
+        }
+
+        #paint-controls {
             margin-top: 10px;
-            padding: 10px 20px;
-            cursor: pointer;
         }
-        #modal button:disabled {
-            background-color: #ccc;
-            cursor: not-allowed;
+
+        #task-manager-window {
+            display: none;
+            position: absolute;
+            top: 100px;
+            left: 100px;
+            background: lightgray;
+            width: 300px;
+            height: 200px;
+            border: 2px solid black;
+            box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5);
+            z-index: 10;
+        }
+        
+        #task-manager-content {
+            padding: 10px;
+            overflow-y: auto;
+            height: 160px;
+        }
+
+        #task-manager-header {
+            background: silver;
+            padding: 5px;
+            cursor: move;
+        }
+
+        .hidden {
+            display: none;
         }
     </style>
 </head>
 <body>
-    <div class="header" onclick="toggleDropdown()">Каталог</div>
-    <div class="dropdown" id="dropdown">
-        <div>ТУТ НИЧЕГО НЕТУ!</div>
-        <div>ТУТ НИЧЕГО НЕТУ!</div>
-        <div>ТУТ НИЧЕГО НЕТУ!</div>
-        <div>ТУТ НИЧЕГО НЕТУ!</div>
-        <div>ТУТ НИЧЕГО НЕТУ!</div>
-        <div>ТУТ НИЧЕГО НЕТУ!</div>
-        <div>ТУТ НИЧЕГО НЕТУ!</div>
-        <div onclick="showWarning()">Интерактив</div>
-    </div>
-    <div id="content">Сайт ещё не готов</div>
+    <div id="desktop">
+        <div class="taskbar">
+            <div class="start-button" onclick="toggleStartMenu()">Пуск</div>
+        </div>
 
-    <div id="modal">
-        <p>Данная страница сайта не доделана до конца! ОНА МОЖЕТ БЫТЬ СЫРОЙ!</p>
-        <button onclick="closeModal()">Отмена</button>
-        <button id="okButton" onclick="redirectToPage()" disabled>OK</button>
+        <div id="start-menu" class="start-menu">
+            <button onclick="openExplorer()">Проводник</button>
+            <button onclick="openCommandLine()">Командная строка</button>
+            <button onclick="openTaskManager()">Диспетчер задач</button>
+            <button onclick="toggleGift()">Подарок</button>
+        </div>
+
+        <!-- Иконки -->
+        <div id="gift" class="icon" onclick="openGift()">
+            <img src="https://img.icons8.com/ios/50/000000/gift.png" alt="gift">
+            <span>Подарок</span>
+        </div>
+
+        <!-- Окна -->
+        <div id="explorer" class="window">
+            <div class="window-header" onmousedown="startDrag(event, 'explorer')">Проводник</div>
+            <div class="window-content">Здесь будут файлы...</div>
+        </div>
+
+        <div id="command-line" class="window">
+            <div class="window-header" onmousedown="startDrag(event, 'command-line')">Командная строка</div>
+            <div class="window-content">
+                <pre id="command-output">C:\></pre>
+            </div>
+        </div>
+
+        <div id="task-manager-window" class="window">
+            <div id="task-manager-header" class="window-header" onmousedown="startDrag(event, 'task-manager')">Диспетчер задач</div>
+            <div id="task-manager-content" class="window-content">
+                <ul>
+                    <li onclick="closeWindow('explorer')">Закрыть Проводник</li>
+                    <li onclick="closeWindow('command-line')">Закрыть Командную строку</li>
+                    <li onclick="closeWindow('gift')">Закрыть Подарок</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Видео -->
+        <div id="video-window">
+            <video id="video" controls>
+                <source src="video.mp4" type="video/mp4">
+                Ваш браузер не поддерживает видео.
+            </video>
+            <button onclick="closeVideo()">Закрыть</button>
+        </div>
+
+        <!-- Рисовалка -->
+        <div id="paint-controls">
+            <button onclick="openPaintApp()">Открыть рисовалку</button>
+        </div>
+
+        <canvas id="paint-canvas" width="500" height="500" class="hidden"></canvas>
+        <button onclick="clearCanvas()" class="hidden">Очистить</button>
     </div>
 
     <script>
-        let timer;
-        let secondsLeft = 30;
-
-        function toggleDropdown() {
-            const dropdown = document.getElementById('dropdown');
-            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        // Хранение в cookies
+        function setCookie(name, value, days) {
+            const date = new Date();
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            document.cookie = `${name}=${value}; expires=${date.toUTCString()}; path=/`;
         }
 
-        function showWarning() {
-            const modal = document.getElementById('modal');
-            const okButton = document.getElementById('okButton');
-            modal.style.display = 'block';
-            okButton.disabled = true;
-            okButton.textContent = `OK (${secondsLeft})`;
-
-            timer = setInterval(() => {
-                secondsLeft--;
-                okButton.textContent = `OK (${secondsLeft})`;
-                if (secondsLeft === 0) {
-                    clearInterval(timer);
-                    okButton.disabled = false;
-                    okButton.textContent = 'OK';
-                }
-            }, 1000);
+        function getCookie(name) {
+            const nameEQ = name + "=";
+            const ca = document.cookie.split(';');
+            for (let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+            }
+            return null;
         }
 
-        function closeModal() {
-            const modal = document.getElementById('modal');
-            modal.style.display = 'none';
-            clearInterval(timer);
-            secondsLeft = 30;
+        // Подарок
+        let giftClicks = parseInt(getCookie("giftClicks")) || 0;
+
+        function openGift() {
+            giftClicks++;
+            setCookie("giftClicks", giftClicks, 7);
+            alert("Подарок был нажат " + giftClicks + " раз.");
+            if (giftClicks === 3) {
+                alert("Подарок ломает сайт!");
+                document.body.style.background = "red";
+                // Открыть видео
+                openVideo();
+            }
         }
 
-        function redirectToPage() {
-            window.location.href = 'index2000.html';
+        // Видео
+        function openVideo() {
+            const videoWindow = document.getElementById("video-window");
+            videoWindow.style.display = "block";
+        }
+
+        function closeVideo() {
+            const videoWindow = document.getElementById("video-window");
+            videoWindow.style.display = "none";
+            document.body.style.background = "white";
+        }
+
+        // Рисовалка
+        let painting = false;
+        const canvas = document.getElementById("paint-canvas");
+        const ctx = canvas.getContext("2d");
+
+        canvas.addEventListener("mousedown", () => painting = true);
+        canvas.addEventListener("mouseup", () => painting = false);
+        canvas.addEventListener("mousemove", draw);
+
+        function draw(event) {
+            if (!painting) return;
+            ctx.lineWidth = 5;
+            ctx.lineCap = "round";
+            ctx.strokeStyle = "black";
+            ctx.lineTo(event.clientX - canvas.offsetLeft, event.clientY - canvas.offsetTop);
+            ctx.stroke();
+        }
+
+        function clearCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function openPaintApp() {
+            document.getElementById("paint-canvas").classList.remove("hidden");
+            document.querySelector("button").classList.add("hidden");
+        }
+
+        // Командная строка
+        function openCommandLine() {
+            document.getElementById("command-line").style.display = "block";
+        }
+
+        function closeWindow(id) {
+            document.getElementById(id).style.display = "none";
+        }
+
+        function startDrag(event, windowId) {
+            const windowElement = document.getElementById(windowId);
+            const offsetX = event.clientX - windowElement.offsetLeft;
+            const offsetY = event.clientY - windowElement.offsetTop;
+
+            function dragMove(e) {
+                windowElement.style.left = e.clientX - offsetX + "px";
+                windowElement.style.top = e.clientY - offsetY + "px";
+            }
+
+            function stopDrag() {
+                document.removeEventListener("mousemove", dragMove);
+                document.removeEventListener("mouseup", stopDrag);
+            }
+
+            document.addEventListener("mousemove", dragMove);
+            document.addEventListener("mouseup", stopDrag);
+        }
+
+        // Диспетчер задач
+        function openTaskManager() {
+            document.getElementById("task-manager-window").style.display = "block";
+        }
+
+        // Пуск
+        function toggleStartMenu() {
+            const startMenu = document.getElementById("start-menu");
+            startMenu.style.display = startMenu.style.display === "block" ? "none" : "block";
+        }
+
+        // Проводник
+        function openExplorer() {
+            document.getElementById("explorer").style.display = "block";
+        }
+
+        // Закрытие видео и окон
+        function closeAllWindows() {
+            document.getElementById("explorer").style.display = "none";
+            document.getElementById("command-line").style.display = "none";
+            document.getElementById("gift").style.display = "none";
         }
     </script>
 </body>
